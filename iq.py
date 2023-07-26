@@ -3,9 +3,6 @@ import os
 import json
 import subprocess
 from bs4 import BeautifulSoup
-from seleniumwire import webdriver
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 from seleniumwire.utils import decode as sw_decode
 import seleniumwire.undetected_chromedriver.v2 as uc
@@ -13,12 +10,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.keys import Keys
 import sys
 import re
 import signal
-import time
-import tempfile
 import pwinput
 
 #Crash prevent attempt
@@ -112,7 +106,7 @@ def choose_res(driver, choice=None):
         r.click()
         
         try:
-            driver.wait_for_request('dash', timeout=5)
+            driver.wait_for_request('dash', timeout=30)
         except:
             print('No dash request')
             
