@@ -14,6 +14,9 @@ import sys
 import re
 import signal
 import pwinput
+import shutil
+
+error_count = 5
 
 #Crash prevent attempt
 def myexcepthook(type, value, tb):
@@ -95,10 +98,11 @@ def choose_res(driver, choice=None):
     
     r = allres[choice-1]
     
-    parent = r.find_element(by=By.XPATH, value='..')
-    p_class = parent.get_attribute("class")
+    actions.move_to_element(definition).perform()
+    grandparent = r.find_element(by=By.XPATH, value='../..')
+    g_class = grandparent.get_attribute("class")
     
-    if 'selected' not in p_class:
+    if 'selected' not in g_class:
         actions.move_to_element(definition).perform()
         actions.move_to_element(r).perform()
         
@@ -134,7 +138,11 @@ def get_episodes(driver):
     return episodes
 
 def extract_dash(driver):
+    global error_count
+
     print('Extracting m3u8 from dash response')
+
+    body = None
 
     r = {}
     
@@ -145,7 +153,7 @@ def extract_dash(driver):
     
     if body is None:
         print('Failed to extract dash response from url, please try again')
-        return
+        raise Exception("Failed dash extract")
     
     body = json.loads(body)
     program = body['data']['program']
@@ -270,7 +278,7 @@ def do_login(driver):
     driver.add_cookie({"name":"intl_playbackRate","domain":".iq.com","value":"1"})
 
 try:
-    os.rmdir('Temp')
+    shutil.rmtree('Temp')
 except:
     pass
 
@@ -298,10 +306,18 @@ if len(episodes) > 1:
         s_exit()
         
     for e in episodes:
-        print(e['title'])
-        s_request(e['href'], driver)
-        choose_res(driver, res)
-        dl_media(main_title, e['title'])
+        attempts = 0
+        while attempts < error_count:
+            try:
+                print(e['title'])
+                s_request(e['href'], driver)
+                choose_res(driver, res)
+                dl_media(main_title, e['title'])
+                break
+            except:
+                attempts += 1
+                print('Episode download failed, retrying')
+            
         
     s_exit()
     
