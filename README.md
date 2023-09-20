@@ -1,7 +1,7 @@
 # iq.com-downloader
 Used to download movies and series from iq.com
 
-#This script is no longer maintained, please check out the V2: https://github.com/TAJLNsScripts/iq.com-Downloader-V2/
+# This script is no longer maintained, please check out the V2: https://github.com/TAJLNsScripts/iq.com-Downloader-V2/
 
 Prerequisites:
 - Google Chrome installed
